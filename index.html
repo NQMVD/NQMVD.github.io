@@ -1,7 +1,352 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
   <head>
-    <meta http-equiv="refresh" content="0; url=https://github.com/NQMVD/needs">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>needs - CLI Tool Dependency Manager</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+        background-color: #0d1117;
+        color: #c9d1d9;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+
+      .logo {
+        font-size: 3rem;
+        font-weight: bold;
+        color: #58a6ff;
+        margin-bottom: 1rem;
+      }
+
+      .tagline {
+        font-size: 1.2rem;
+        color: #7c3aed;
+        margin-bottom: 2rem;
+      }
+
+      .terminal {
+        background-color: #21262d;
+        border: 1px solid #30363d;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+      }
+
+      .terminal-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #30363d;
+      }
+
+      .terminal-dots {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+
+      .dot.red {
+        background-color: #ff5f56;
+      }
+      .dot.yellow {
+        background-color: #ffbd2e;
+      }
+      .dot.green {
+        background-color: #27ca3f;
+      }
+
+      .terminal-title {
+        margin-left: 1rem;
+        color: #8b949e;
+        font-size: 0.9rem;
+      }
+
+      .command {
+        color: #7c3aed;
+      }
+
+      .output {
+        color: #58a6ff;
+        margin-left: 1rem;
+      }
+
+      .comment {
+        color: #8b949e;
+      }
+
+      .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin: 3rem 0;
+      }
+
+      .feature {
+        background-color: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 8px;
+        padding: 2rem;
+      }
+
+      .feature h3 {
+        color: #58a6ff;
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+      }
+
+      .feature p {
+        color: #8b949e;
+        margin-bottom: 1rem;
+      }
+
+      .feature code {
+        background-color: #21262d;
+        color: #7c3aed;
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+      }
+
+      .links {
+        text-align: center;
+        margin-top: 3rem;
+      }
+
+      .btn {
+        display: inline-block;
+        background-color: #238636;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        text-decoration: none;
+        border-radius: 6px;
+        margin: 0.5rem;
+        font-weight: bold;
+        transition: background-color 0.2s;
+      }
+
+      .btn:hover {
+        background-color: #2ea043;
+      }
+
+      .btn.secondary {
+        background-color: #21262d;
+        border: 1px solid #30363d;
+      }
+
+      .btn.secondary:hover {
+        background-color: #30363d;
+      }
+
+      .status {
+        text-align: center;
+        margin: 2rem 0;
+        padding: 1rem;
+        background-color: #0d1117;
+        border: 1px solid #30363d;
+        border-radius: 8px;
+      }
+
+      .status-indicator {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background-color: #f85149;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid #30363d;
+        color: #8b949e;
+      }
+
+      .install-section {
+        background-color: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 8px;
+        padding: 2rem;
+        margin: 2rem 0;
+        text-align: center;
+      }
+
+      .install-section h2 {
+        color: #58a6ff;
+        margin-bottom: 1rem;
+      }
+
+      .install-command {
+        background-color: #21262d;
+        color: #7c3aed;
+        padding: 1rem;
+        border-radius: 6px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        margin: 1rem 0;
+        border: 1px solid #30363d;
+      }
+    </style>
   </head>
-  <body></body>
+  <body>
+    <div class="container">
+      <header>
+        <div class="logo">needs</div>
+        <div class="tagline">CLI Tool Dependency Manager for Your Workflow</div>
+      </header>
+
+      <div class="terminal">
+        <div class="terminal-header">
+          <div class="terminal-dots">
+            <div class="dot red"></div>
+            <div class="dot yellow"></div>
+            <div class="dot green"></div>
+          </div>
+          <div class="terminal-title">Terminal</div>
+        </div>
+        <div>
+          <span class="command">$ cargo install needs</span><br />
+          <span class="output">Installing needs v0.1.0...</span><br />
+          <span class="output"
+            >Installed package `needs` (executable `needs`)</span
+          ><br /><br />
+
+          <span class="command">$ needs add ripgrep</span><br />
+          <span class="output">✓ Added ripgrep to your needs</span><br />
+          <span class="comment"># Fast text search, replaces grep</span
+          ><br /><br />
+
+          <span class="command">$ needs add fd</span><br />
+          <span class="output">✓ Added fd to your needs</span><br />
+          <span class="comment"># Simple alternative to find</span><br /><br />
+
+          <span class="command">$ needs install</span><br />
+          <span class="output">Installing ripgrep...</span><br />
+          <span class="output">Installing fd...</span><br />
+          <span class="output">✓ All tools installed successfully!</span>
+        </div>
+      </div>
+
+      <div class="status">
+        <span class="status-indicator"></span>
+        <strong>Status:</strong> In Development
+      </div>
+
+      <div class="install-section">
+        <h2>Get Started</h2>
+        <p>Install needs and start managing your CLI tool dependencies:</p>
+        <div class="install-command">cargo install needs</div>
+        <p><em>Note: This tool is currently in development</em></p>
+      </div>
+
+      <div class="features">
+        <div class="feature">
+          <h3>🦀 Rust-First</h3>
+          <p>
+            Focuses on modern Rust CLI tools that are faster and more reliable
+            than traditional alternatives.
+          </p>
+          <p>
+            Use <code>ripgrep</code> instead of grep, <code>fd</code> instead of
+            find, <code>bat</code> instead of cat, and more.
+          </p>
+        </div>
+
+        <div class="feature">
+          <h3>📦 Dependency Tracking</h3>
+          <p>
+            Keep track of the CLI tools you depend on for your projects and
+            workflows. Never forget which tools you need.
+          </p>
+          <p>
+            Simple commands like <code>needs add</code> and
+            <code>needs remove</code> manage your tool list.
+          </p>
+        </div>
+
+        <div class="feature">
+          <h3>🚀 Batch Installation</h3>
+          <p>
+            Install all your needed CLI tools with a single command. Perfect for
+            setting up new development environments.
+          </p>
+          <p>
+            Run <code>needs install</code> to get everything you need in one go.
+          </p>
+        </div>
+
+        <div class="feature">
+          <h3>💻 Cross-Platform</h3>
+          <p>
+            Works on macOS, Linux, and Windows. Manage your CLI tools
+            consistently across all your development machines.
+          </p>
+          <p>Built with Rust for maximum compatibility and performance.</p>
+        </div>
+      </div>
+
+      <div class="links">
+        <a href="https://github.com/NQMVD/needs" class="btn">View on GitHub</a>
+        <a href="https://crates.io/search?q=cli" class="btn secondary"
+          >Browse CLI Tools</a
+        >
+      </div>
+
+      <footer>
+        <p>Built with ❤️ for developers who love great CLI tools</p>
+        <p>
+          <a
+            href="https://github.com/NQMVD"
+            style="color: #58a6ff; text-decoration: none"
+            >@NQMVD</a
+          >
+          |
+          <a
+            href="https://rust-lang.org"
+            style="color: #58a6ff; text-decoration: none"
+            >Rust</a
+          >
+        </p>
+      </footer>
+    </div>
+  </body>
 </html>
